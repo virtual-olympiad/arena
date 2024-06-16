@@ -30,7 +30,7 @@ const nav = [
 	},
 	{
 		title: 'Sponsor',
-		href: '/sponsor'
+		href: 'https://volympiad.org/sponsor'
 	}
 ];
 

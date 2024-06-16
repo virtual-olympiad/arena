@@ -1,8 +1,16 @@
 import type { CalendarDate } from "@internationalized/date";
 
 declare global {
-    interface DisplayPlayers {
+    interface DisplayPlayer {
         avatar_url: string;
+    }
+
+    interface Player extends DisplayPlayer {
+        uid: string;
+        display_name: string;
+        username: string;
+        statusText: string;
+        host?: boolean;
     }
 
     type roomMode = 'standard' | 'guts' | 'relay' | 'blitz' | 'showdown';
@@ -12,7 +20,7 @@ declare global {
         title: string;
         description: string;
         mode: roomMode;
-        players: DisplayPlayers[];
+        players: DisplayPlayer[];
         maxPlayers: number;
     }
 
