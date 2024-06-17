@@ -8,8 +8,11 @@ export const GET = async (event) => {
 
 	if (code) {
 		const { error: e } = await supabase.auth.exchangeCodeForSession(code);
+		console.log(await supabase.auth.getSession());
+		console.log(supabase.auth.getUser());
+
 		if (!e) {
-			throw redirect(303, `/${next.slice(1)}`);
+			throw redirect(301, `/${next.slice(1)}`);
 		}
 
 		throw error(e.status ?? 400, e.code);

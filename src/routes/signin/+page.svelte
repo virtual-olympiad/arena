@@ -4,15 +4,22 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 
-	import { supabase } from '$lib/supabase';
+	import { supabase } from '$lib/supabase.js';
 
 	const signUp = async () => {
-		await fetch('api/auth');
+		await supabase.auth.signInWithOAuth({
+			provider: 'google',
+			options: {
+				redirectTo: 'https://arena.volympiad.org/api/auth/callback'
+			}
+		});
+
+		console.log(supabase.auth.getUser());
 	};
 </script>
 
 <section class="mx-auto py-8 md:py-12 md:pb-8 xl:pb-12">
-	<Card.Root class="max-w-sm mx-2">
+	<Card.Root class="mx-2 max-w-sm">
 		<Card.Header>
 			<Card.Title class="text-2xl">Sign In</Card.Title>
 			<Card.Description>Choose an OAuth provider to sign up or log in with below.</Card.Description>

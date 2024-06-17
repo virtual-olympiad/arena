@@ -17,6 +17,15 @@
 	import * as config from '$lib/siteConfig';
 
 	let open = false;
+
+	import { supabase } from '$lib/supabase';
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		console.log(await supabase.auth.getSession());
+	});
+
+	console.log(supabase.auth.getUser());
 </script>
 
 <svelte:head>
@@ -90,20 +99,12 @@
 					</DropdownMenu.Label>
 					<DropdownMenu.Separator />
 					<DropdownMenu.Group>
-						<DropdownMenu.Item>
-							Profile
-						</DropdownMenu.Item>
-						<DropdownMenu.Item>
-							History
-						</DropdownMenu.Item>
-						<DropdownMenu.Item>
-							Settings
-						</DropdownMenu.Item>
+						<DropdownMenu.Item>Profile</DropdownMenu.Item>
+						<DropdownMenu.Item>History</DropdownMenu.Item>
+						<DropdownMenu.Item>Settings</DropdownMenu.Item>
 					</DropdownMenu.Group>
 					<DropdownMenu.Separator />
-					<DropdownMenu.Item>
-						Log out
-					</DropdownMenu.Item>
+					<DropdownMenu.Item>Log out</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		</div>
