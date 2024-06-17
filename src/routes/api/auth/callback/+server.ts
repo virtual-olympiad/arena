@@ -9,7 +9,7 @@ export const GET = async (event) => {
 	if (code) {
 		const { error: e } = await supabase.auth.exchangeCodeForSession(code);
 		console.log(await supabase.auth.getSession());
-		console.log(supabase.auth.getUser());
+		console.log(await supabase.auth.getUser());
 
 		if (!e) {
 			throw redirect(301, `/${next.slice(1)}`);

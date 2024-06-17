@@ -23,9 +23,8 @@
 
 	onMount(async () => {
 		console.log(await supabase.auth.getSession());
+		console.log(await supabase.auth.getUser());
 	});
-
-	console.log(supabase.auth.getUser());
 </script>
 
 <svelte:head>
