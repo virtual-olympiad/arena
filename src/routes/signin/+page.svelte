@@ -8,7 +8,10 @@
 
 	const signUp = async () => {
 		await supabase.auth.signInWithOAuth({
-			provider: 'google'
+			provider: 'google',
+			options: {
+				redirectTo: 'https://arena.volympiad.org/api/auth/callback'
+			}
 		});
 
 		console.log(await supabase.auth.getUser());
