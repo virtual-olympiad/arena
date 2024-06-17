@@ -1,12 +1,13 @@
 import { error, redirect } from '@sveltejs/kit';
 import { supabase } from '$lib/supabase.js';
 
-export const GET = async (event) => {
-	const { url } = event;
+export async function GET({ url }) {
 	const code = url.searchParams.get('code') as string;
 	const next = url.searchParams.get('next') ?? '/';
 
 	if (code) {
+		console.log(url);
+		console.log(code);
 		const { error: e } = await supabase.auth.exchangeCodeForSession(code);
 		console.log(await supabase.auth.getSession());
 		console.log(await supabase.auth.getUser());
@@ -20,4 +21,4 @@ export const GET = async (event) => {
 
 	// return the user to an error page with instructions
 	throw error(400);
-};
+}

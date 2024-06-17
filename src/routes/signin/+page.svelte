@@ -10,7 +10,7 @@
 		await supabase.auth.signInWithOAuth({
 			provider: 'google',
 			options: {
-				redirectTo: 'https://arena.volympiad.org/api/auth/callback'
+				redirectTo: 'https://arena.volympiad.org'
 			}
 		});
 
