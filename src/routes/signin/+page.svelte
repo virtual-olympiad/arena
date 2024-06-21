@@ -4,17 +4,15 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 
-	import { supabase } from '$lib/supabase.js';
+	export let data;
 
 	const signUp = async () => {
-		await supabase.auth.signInWithOAuth({
+		await data.supabase.auth.signInWithOAuth({
 			provider: 'google',
 			options: {
-				redirectTo: 'https://arena.volympiad.org'
+				redirectTo: data.url + '/api/auth/callback'
 			}
 		});
-
-		console.log(await supabase.auth.getUser());
 	};
 </script>
 
