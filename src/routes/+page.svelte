@@ -12,61 +12,15 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
-	import { Sword, Swords, BicepsFlexed, Zap, FlagTriangleRight } from 'lucide-svelte';
-
-	import { capitalize } from "$lib/utils.js";
-
 	import PublicRooms from './public-rooms.svelte';
 	import PublicRoomsFilter from './public-rooms-filter.svelte';
-	import { type ComponentType } from 'svelte';
+    import CreateRoom from './create-room.svelte';
+    import JoinRoom from './join-room.svelte';
 
-	const modes: {
-		value: roomMode | null;
-		label: string;
-		icon: ComponentType;
-		description: string;
-		disabled?: boolean;
-	}[] = [
-		{
-			value: 'standard',
-			label: 'Standard',
-			icon: Sword,
-			description: 'Solve a customizable problemset, free-for-all or in teams'
-		},
-		{
-			value: 'guts',
-			label: 'Guts',
-			icon: BicepsFlexed,
-			description: 'Solve several rounds of problems, no going back!'
-		},
-		{
-			value: 'relay',
-			label: 'Relay',
-			icon: FlagTriangleRight,
-			description: 'Solve a relay of problems with team members',
-			disabled: true
-		},
-		{
-			value: 'blitz',
-			label: 'Blitz',
-			icon: Zap,
-			description: '???',
-			disabled: true
-		},
-		{
-			value: 'showdown',
-			label: 'Showdown',
-			icon: Swords,
-			description: '???',
-			disabled: true
-		}
-	];
+	export let data;
 
-	let selectedMode = 'standard'
-	
-    const changeMode = (mode: any) => {
-        selectedMode = mode.value as roomMode;
-    };
+    let { session } = data;
+    $: ({ session } = data);
 
 	let titleFilter = '';
 
@@ -106,87 +60,10 @@
 				<Tabs.Trigger value="join">Join Room</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="create">
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Create a Room</Card.Title>
-						<Card.Description>Practice and compete together.</Card.Description>
-					</Card.Header>
-					<Card.Content class="space-y-2">
-						<div class="space-y-1">
-							<Label for="room-code">Room Title</Label>
-							<Input id="room-code" type="text" placeholder="Enter a title..." />
-						</div>
-						<div class="space-y-1">
-							<Label for="room-password">Room Description</Label>
-							<Textarea
-								class="resize-none"
-								id="room-password"
-								placeholder="Enter a description..."
-							/>
-						</div>
-						<div class="space-y-1">
-							<Label for="create-mode">Mode</Label>
-							<Select.Root onSelectedChange={(v) => changeMode(v)}>
-								<Select.Trigger id="create-mode" class="items-start [&_[data-description]]:hidden" let:builder>
-									<Select.Value asChild placeholder="Select a game mode">
-										{capitalize(selectedMode)}
-									</Select.Value>
-								</Select.Trigger>
-								<Select.Content>
-									{#each modes as { label, value, icon, description, disabled }}
-										<Select.Item {value} {disabled}>
-											<div class="flex items-start gap-3 text-muted-foreground">
-												<svelte:component this={icon} class="size-5" />
-												<div class="grid gap-0.5">
-													<p class="text-foreground">
-														{label}
-													</p>
-													<p class="text-xs" data-description>
-														{description}
-													</p>
-												</div>
-											</div>
-										</Select.Item>
-									{/each}
-								</Select.Content>
-							</Select.Root>
-							<p class="text-xs text-muted-foreground">
-								You won't be able to change this afterwards.
-							</p>
-						</div>
-						<div class="space-y-1">
-							<Label for="visibility">Room Visibility</Label>
-							<div class="flex items-center space-x-3">
-								<p class="text-sm text-muted-foreground">Make Private</p>
-								<Switch id="visibility" />
-							</div>
-						</div>
-					</Card.Content>
-					<Card.Footer>
-						<Button>Create Room</Button>
-					</Card.Footer>
-				</Card.Root>
+				<CreateRoom {session} />
 			</Tabs.Content>
 			<Tabs.Content value="join">
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Join a Room</Card.Title>
-						<Card.Description>Ask the room host for a code.</Card.Description>
-					</Card.Header>
-					<Card.Content class="space-y-2">
-						<div class="space-y-1">
-							<Label for="room-code">Room Code</Label>
-							<Input id="room-code" type="text" placeholder="Enter a code..." />
-						</div>
-						<div class="space-y-1">
-							<Label for="room-password">Room Password</Label>
-							<Input id="room-password" type="text" placeholder="For private rooms..." />
-						</div>
-					</Card.Content>
-					<Card.Footer>
-						<Button>Join Room</Button>
-					</Card.Footer>
-				</Card.Root>
+				<JoinRoom {session} />
 			</Tabs.Content>
 		</Tabs.Root>
 

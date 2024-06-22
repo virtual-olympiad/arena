@@ -31,16 +31,6 @@
 
     onMount(() => {
         const { data } = supabase.auth.onAuthStateChange((event, _session) => {
-            console.log('hi');
-            if (!_session) {
-                /**
-                 * Queue this as a task so the navigation won't prevent the
-                 * triggering function from completing
-                 */
-                setTimeout(() => {
-                    goto('/', { invalidateAll: true });
-                });
-            }
             if (_session?.expires_at !== session?.expires_at) {
                 invalidate('supabase:auth');
             }
@@ -62,7 +52,7 @@
             method: 'POST'
         });
 
-        await invalidateAll();
+        await goto('/', { invalidateAll: true });
 
         loadingSignOut = false;
     };
@@ -73,19 +63,26 @@
                 toast.error('Invalid User Authentication');
                 break;
             case 'inputError':
-                toast.warning('Invalid Data Type');
+                toast.warning('Invalid Input Data');
                 break;
+            case 'coreError':
+                if (message == 'Cannot create room, user is already in a room.') {
+                    toast.error('You are already in a room.');
+                }
+                break;
+            case 'supabaseError':
+            default:
+                toast.error('Something went wrong.', {
+                    description: 'Error: ' + message
+                });
         }
     });
 
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-    onMount(async () => {
-        socket.emit('create-room', {
-            token: session?.access_token,
-            data: 'hi'
-        });
+    socket.on('create-room:success', async () => {
+        await goto('/live', { invalidateAll: true });
     });
+
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 </script>
 
 <svelte:head>
@@ -157,7 +154,9 @@
                                 <LoaderCircle class="m-auto h-4 w-4 animate-spin" />
                             {:else}
                                 <!--<Avatar.Image src={profile?.avatar_url} alt={"@" + profile?.username} />-->
-                                <Avatar.Fallback>{profile?.display_name?.[0] ?? '?'}</Avatar.Fallback>
+                                <Avatar.Fallback>
+                                    {profile?.display_name?.[0] ?? '?'}
+                                </Avatar.Fallback>
                             {/if}
                         </Avatar.Root>
                     </Button>
@@ -167,18 +166,30 @@
                         <DropdownMenu.Label class="font-normal">
                             <div class="flex flex-col space-y-1">
                                 <p class="text-sm font-medium leading-none">
-                                    {profile?.display_name}
+                                    {profile.display_name}
                                 </p>
                                 <p class="text-xs leading-none text-muted-foreground">
-                                    @{profile?.username}
+                                    @{profile.username}
                                 </p>
                             </div>
                         </DropdownMenu.Label>
                         <DropdownMenu.Separator />
                         <DropdownMenu.Group>
-                            <DropdownMenu.Item>Profile</DropdownMenu.Item>
-                            <DropdownMenu.Item>History</DropdownMenu.Item>
-                            <DropdownMenu.Item>Settings</DropdownMenu.Item>
+                            <DropdownMenu.Item
+                                target="_blank"
+                                rel="noreferrer"
+                                href={'https://volympiad.org/profile/@' + profile.username}
+                            >
+                                Profile
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item href="/history">History</DropdownMenu.Item>
+                            <DropdownMenu.Item
+                                target="_blank"
+                                rel="noreferrer"
+                                href={'https://volympiad.org/settings'}
+                            >
+                                Settings
+                            </DropdownMenu.Item>
                         </DropdownMenu.Group>
                         <DropdownMenu.Separator />
                         <DropdownMenu.Item on:click={signOut} disabled={loadingSignOut}>

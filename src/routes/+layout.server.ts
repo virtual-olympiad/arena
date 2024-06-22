@@ -4,24 +4,15 @@ import type { LayoutServerLoad } from './$types';
 export const load = (async ({ url, locals: { supabase, safeGetSession } }) => {
     const { session, user } = await safeGetSession();
 
-    const firstPath = url.pathname.split('/')[1];
+    let profile;
 
-    if (firstPath == 'signin' || firstPath == 'api') {
-        return {
-            session,
-            user
-        };
+    if (session) {
+        ({ data: profile } = await supabase
+            .from('profiles')
+            .select(`username, display_name, arena_room`)
+            .eq('id', session.user.id)
+            .single());
     }
-
-    if (!session) {
-        redirect(303, '/signin');
-    }
-
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select(`username, display_name`)
-        .eq('id', session.user.id)
-        .single();
 
     return {
         session,
