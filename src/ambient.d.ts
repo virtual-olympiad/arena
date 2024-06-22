@@ -10,7 +10,6 @@ declare global {
         display_name: string;
         username: string;
         statusText: string;
-        host?: boolean;
     }
 
     type roomMode = 'standard' | 'guts' | 'relay' | 'blitz' | 'showdown';

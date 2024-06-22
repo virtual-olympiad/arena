@@ -7,23 +7,25 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
+	
+	export let id, host: string;
+
+	console.log(id, host);
 
 	const players: Player[] = [
 		{
-			uid: '123',
+			uid: id,
 			avatar_url: '/mango.v3@4x.png',
 			display_name: 'Mango',
 			username: 'polarity',
-			statusText: 'Bing Chilling',
-			host: true
+			statusText: 'Bing Chilling'
 		},
 		{
 			uid: '1342',
 			avatar_url: '/mango.v3@4x.png',
 			display_name: 'FDSAFASDKLJFASDFJSDKALfdsklajfdklas',
 			username: 'polarity',
-			statusText: 'Bing Chilling',
-			host: false
+			statusText: 'Bing Chilling'
 		},
 		{
 			uid: '12345',
@@ -89,13 +91,11 @@
 			statusText: 'Bing Cfasfashilling'
 		}
 	];
-
-	const my_uid = '123';
 </script>
 
 <div class="h-full">
 	<ScrollArea class="h-full max-h-[400px] rounded-md border p-2 lg:max-h-[600px]">
-		{#each players as { uid, avatar_url, display_name, username, statusText, host }}
+		{#each players as { uid, avatar_url, display_name, username, statusText }}
 			<div class="flex items-center space-x-4 rounded-md border p-4 px-2 sm:px-4">
 				<Avatar.Root class="h-8 w-8">
 					<Avatar.Image src={avatar_url} alt="@shadcn" />
@@ -130,13 +130,13 @@
 						</HoverCard.Content>
 					</HoverCard.Root>
 				</div>
-				{#if my_uid === uid}
+				{#if uid === id}
 					<div class="relative grid place-items-center">
 						<span class="absolute h-3 w-3 animate-pulse rounded-full bg-blue-300" />
 						<span class="absolute h-2 w-2 rounded-full bg-blue-500" />
 					</div>
 				{/if}
-				{#if host}
+				{#if uid === host}
 					<Badge variant="secondary" class="ml-2">Host</Badge>
 				{/if}
 				<DropdownMenu.Root>

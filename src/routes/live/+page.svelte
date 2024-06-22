@@ -56,7 +56,13 @@
 		}
 	};
 
+	export let data;
+
+    let { supabase, session, user, profile, room } = data;
+    $: ({ supabase, session, user, profile, room } = data);
+
 	let mode: roomMode = 'standard';
+	$: mode = room?.mode ?? 'standard';
 </script>
 
 <section class="w-full max-w-[1279px] space-y-4 p-2 sm:p-4 md:pb-8 lg:py-12 xl:pb-12">
@@ -74,14 +80,18 @@
 			<span
 				class="inline-block max-w-[140px] overflow-hidden overflow-ellipsis text-nowrap sm:max-w-[200px]"
 			>
-				Mango's Room
+				{room?.title ?? ""}
 			</span>
 			<span class="text-sm text-muted-foreground min-[500px]:ml-2 lg:text-base">
 				<span class="select-none">#</span>1234
-				<Badge class="ml-2 min-[500px]:hidden" variant="secondary">Public</Badge>
+				<Badge class="ml-2 min-[500px]:hidden" variant="secondary">
+					{room.private ? 'Private':'Public'}
+				</Badge>
 			</span>
 		</div>
-		<Badge class="mx-2 hidden min-[500px]:block" variant="secondary">Public</Badge>
+		<Badge class="mx-2 hidden min-[500px]:block" variant="secondary">
+			{room.private ? 'Private':'Public'}
+		</Badge>
 		<div class="!ml-auto flex items-center space-x-2 md:space-x-4">
 			<Button variant="outline" size="icon" class="hidden md:flex">
 				<Trash2 class="h-4 w-4" />
@@ -104,7 +114,7 @@
 					</Button>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content side="bottom" align="start">
-					<DropdownMenu.Item>Copy Room Code</DropdownMenu.Item>
+					<DropdownMenu.Item on:click={() => navigator.clipboard.writeText(room?.code ?? "")}>Copy Room Code</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		</div>
@@ -130,7 +140,7 @@
 		</Tabs.Root>
 
 		<div class="xl:col-span-2">
-			<Players />
+			<Players id={user?.id} host={room?.info?.host} />
 		</div>
 	</section>
 </section>
