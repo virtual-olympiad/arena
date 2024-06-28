@@ -18,9 +18,9 @@
     import JoinRoom from './join-room.svelte';
 
 	export let data;
-
-    let { session } = data;
-    $: ({ session } = data);
+	
+    let { rooms, supabase, session } = data;
+    $: ({ rooms, supabase, session } = data);
 
 	let titleFilter = '';
 
@@ -69,7 +69,7 @@
 
 		<div class="lg:col-span-2 xl:col-span-1">
 			<PublicRoomsFilter bind:titleFilter bind:otherFilters />
-			<PublicRooms {titleFilter} {otherFilters} />
+			<PublicRooms {rooms} {supabase} {titleFilter} {otherFilters} />
 		</div>
 	</section>
 </section>
