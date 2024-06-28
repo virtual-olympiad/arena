@@ -1,23 +1,37 @@
 import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from '../$types';
 
 export const load = (async ({ parent, locals: { supabase, safeGetSession } }) => {
-    const { session, user, profile } = await parent();
+    const { session, user } = await parent();
 
     if (!session) {
         redirect(303, '/signin');
     }
 
-    if (!profile?.arena_room){
+    const { data } = await supabase
+        .from('arena_users_rooms')
+        .select(
+            `
+            arena_rooms (
+                code,
+                title,
+                description,
+                mode,
+                host,
+                players,
+                max_players
+            )
+            `
+        )
+        .eq('user_id', user.id).limit(1).single();
+
+    const room = data?.arena_rooms;
+
+    if (!room) {
         redirect(303, '/');
     }
-
-    const { data: room } = await supabase
-        .from('arena_rooms')
-        .select()
-        .eq('code', profile.arena_room)
-        .single();
 
     return {
         room
     };
-});
+}) satisfies PageServerLoad;

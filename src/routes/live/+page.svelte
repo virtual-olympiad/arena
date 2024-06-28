@@ -120,7 +120,7 @@
 		</div>
 	</div>
 	<section class="grid grid-cols-1 gap-4 lg:h-max lg:grid-cols-2 xl:grid-cols-5">
-		<Tabs.Root value="problemset" class="flex h-full w-full flex-col xl:col-span-3">
+		<Tabs.Root value="room" class="flex h-full w-full flex-col xl:col-span-3">
 			<Tabs.List
 				class="flex h-fit w-full flex-col justify-stretch min-[500px]:grid min-[500px]:grid-cols-3"
 			>
@@ -129,7 +129,7 @@
 				<Tabs.Trigger value="problemset">Problemset</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content class="lg:h-full" value="room">
-				<RoomSettings />
+				<RoomSettings {user} {room} />
 			</Tabs.Content>
 			<Tabs.Content class="lg:h-full" value="game">
 				<GameSettings />

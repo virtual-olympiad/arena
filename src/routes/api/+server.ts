@@ -1,10 +1,9 @@
 import { error, json } from '@sveltejs/kit';
-import { supabase } from '$lib/supabase';
 import { CalendarDate, parseDate } from '@internationalized/date';
 
 const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
-export async function GET({ url }) {
+export async function GET({ url, locals: { supabase } }) {
 	const problemId = url.searchParams.get('problemId') ?? '';
 	const textString = url.searchParams.get('textString') ?? '';
 

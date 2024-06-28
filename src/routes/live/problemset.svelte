@@ -10,6 +10,10 @@
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+
+    export let user, room;
+
+	$: notHost = (user?.id != room?.info?.host);
 </script>
 
 <Card.Root class="h-full">

@@ -10,8 +10,6 @@
 	
 	export let id, host: string;
 
-	console.log(id, host);
-
 	const players: Player[] = [
 		{
 			uid: id,
@@ -91,6 +89,10 @@
 			statusText: 'Bing Cfasfashilling'
 		}
 	];
+
+	export let user, room;
+
+	$: notHost = (user?.id != room?.info?.host);
 </script>
 
 <div class="h-full">

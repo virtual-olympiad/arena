@@ -19,8 +19,9 @@ declare global {
         title: string;
         description: string;
         mode: roomMode;
+        host: string;
         players: DisplayPlayer[];
-        maxPlayers: number;
+        max_players: number;
     }
 
     type PublicRoomOtherFilters = {
