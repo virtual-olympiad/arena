@@ -27,7 +27,7 @@
     import type { SupabaseClient } from '@supabase/supabase-js';
     import BreadcrumbLink from '$lib/components/ui/breadcrumb/breadcrumb-link.svelte';
 
-    export let rooms: PublicRoom[];
+    export let rooms: PublicRoom[], session;
 
     rooms.sort((a, b) => {
         return (b.players?.length ?? 0) - (a.players?.length ?? 0);
@@ -104,7 +104,8 @@
             header: '',
             cell: ({ value }) => {
                 return createRender(PublicRoomsActions, {
-                    code: value.code
+                    code: value.code,
+                    session
                 });
             },
             plugins: {

@@ -5,15 +5,20 @@
 	import PublicRoomsFilter from './public-rooms-filter.svelte';
     import CreateRoom from './create-room.svelte';
     import JoinRoom from './join-room.svelte';
+    import { socket } from '$lib/socket';
 
 	export let data;
 	
     let { rooms, supabase, session } = data;
     $: ({ rooms, supabase, session } = data);
 
-	$: onlinePlayers = rooms.reduce((curr, val)=> {
+	let onlinePlayers = 0;
+
+	/**
+	 * $: onlinePlayers = rooms.reduce((curr, val)=> {
 		return curr + (val.players?.length ?? 0)
 	}, 0);
+	**/
 
 	let titleFilter = '';
 
@@ -21,6 +26,11 @@
 		notFull: false,
 		mode: null
 	};
+
+
+    socket.on('player-count:update', ({value}) => {
+		onlinePlayers = value;
+	});
 </script>
 
 <section class="w-full max-w-[1536px] p-4">
@@ -62,7 +72,7 @@
 
 		<div class="lg:col-span-2 xl:col-span-1">
 			<PublicRoomsFilter bind:titleFilter bind:otherFilters />
-			<PublicRooms {rooms} {supabase} {titleFilter} {otherFilters} />
+			<PublicRooms {rooms} {session} {supabase} {titleFilter} {otherFilters} />
 		</div>
 	</section>
 </section>

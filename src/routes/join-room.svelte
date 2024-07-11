@@ -13,8 +13,7 @@
         socket.emit('join-room', {
             token: session?.access_token,
             data: {
-                code,
-                password
+                code
             }
         });
     };
@@ -30,10 +29,12 @@
             <Label for="room-code">Room Code</Label>
             <Input id="room-code" bind:value={code} type="text" placeholder="Enter a code..." />
         </div>
+        <!--
         <div class="space-y-1">
             <Label for="room-password">Room Password</Label>
             <Input id="room-password" bind:value={password} type="text" placeholder="For private rooms..." />
         </div>
+        -->
     </Card.Content>
     <Card.Footer>
         <Button on:click={handleJoinRoom}>Join Room</Button>

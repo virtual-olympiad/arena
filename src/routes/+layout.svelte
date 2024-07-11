@@ -66,8 +66,18 @@
                 toast.warning('Invalid Input Data');
                 break;
             case 'coreError':
-                if (message == 'Cannot create room, user is already in a room.') {
-                    toast.error('You are already in a room.');
+                switch (message) {
+                    case 'Cannot create room, user is already in a room.': case 'Cannot join room, user is already in a room.':
+                        toast.error('You are already in a room.', {
+                            description: 'Leave the room to create or join another room.'
+                        });
+                    break;
+                    case 'Invalid room code.':
+                        toast.error('Invalid room code');
+                    break;
+                    case 'Cannot join room, room is full.':
+                        toast.error('Cannot join room, room is full.');
+                    break;
                 }
                 break;
             case 'supabaseError':
@@ -79,6 +89,10 @@
     });
 
     socket.on('create-room:success', async () => {
+        await goto('/live', { invalidateAll: true });
+    });
+
+    socket.on('join-room:success', async () => {
         await goto('/live', { invalidateAll: true });
     });
 

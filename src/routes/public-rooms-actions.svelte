@@ -2,14 +2,25 @@
 	import { Ellipsis, Play } from 'lucide-svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
+    import { socket } from "$lib/socket";
 
-	export let code: string;
+	export let code: string, session;
+	const handleJoinRoom = () => {
+		console.log(code);
+        socket.emit('join-room', {
+            token: session?.access_token,
+            data: {
+                code
+            }
+        });
+    };
 </script>
 
-<Button variant="ghost" size="icon" class="relative h-8 w-8 p-0">
+<Button on:click={handleJoinRoom} variant="ghost" size="icon" class="relative h-8 w-8 p-0">
     <span class="sr-only">Join room</span>
     <Play class="h-4 w-4" />
 </Button>
+
 <!--
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger asChild let:builder>
