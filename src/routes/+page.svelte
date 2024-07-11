@@ -1,16 +1,5 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { Separator } from '$lib/components/ui/separator';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Switch } from '$lib/components/ui/switch/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
 	import PublicRooms from './public-rooms.svelte';
 	import PublicRoomsFilter from './public-rooms-filter.svelte';
@@ -21,6 +10,10 @@
 	
     let { rooms, supabase, session } = data;
     $: ({ rooms, supabase, session } = data);
+
+	$: onlinePlayers = rooms.reduce((curr, val)=> {
+		return curr + (val.players?.length ?? 0)
+	}, 0);
 
 	let titleFilter = '';
 
@@ -45,12 +38,12 @@
 				<span class="absolute h-3 w-3 animate-pulse rounded-full bg-green-300" />
 				<span class="absolute h-2 w-2 rounded-full bg-green-500" />
 			</div>
-			100 Players Online
+			{ onlinePlayers ?? 0 } Players Online
 			<div class="relative ml-4 mr-1 grid place-items-center">
 				<span class="absolute h-3 w-3 animate-pulse rounded-full bg-blue-300" />
 				<span class="absolute h-2 w-2 rounded-full bg-blue-500" />
 			</div>
-			28 Public Rooms
+			{ rooms?.length ?? 0 } Public Rooms
 		</div>
 	</section>
 	<section class="grid grid-cols-1 gap-4 lg:grid-cols-3 xl:grid-cols-2">
