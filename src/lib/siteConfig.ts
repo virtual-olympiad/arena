@@ -8,7 +8,7 @@ const links = {
 
 const site = {
 	site_name: 'Virtual Olympiad',
-	name: 'VOA ⸱ Virtual Olympiad Arena',
+	name: 'Arena ⸱ Virtual Olympiad',
 	url: 'https://arena.volympiad.org',
 	ogImage: 'https://arena.volympiad.org/voa.png',
 	description: 'Online multiplayer contest mocks. Modes, problems, scoring - extensively customizable.',
