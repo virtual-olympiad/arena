@@ -18,20 +18,54 @@ export const load = (async ({ parent, locals: { supabase, safeGetSession } }) =>
                 description,
                 mode,
                 host,
+                private,
                 players,
                 max_players
             )
             `
         )
         .eq('user_id', user.id).limit(1).single();
+    
+    let room;
 
-    const room = data?.arena_rooms;
+    if (Array.isArray(data?.arena_rooms)){
+        room = data?.arena_rooms[0];
+    } else {
+        room = data?.arena_rooms;
+    }
 
     if (!room) {
         redirect(303, '/');
     }
 
+    let { data: playersData } = await supabase
+        .from('arena_users_rooms')
+        .select(
+            `
+            profiles (
+                id,
+                username,
+                display_name,
+                status_text
+            )
+            `
+        )
+        .eq('room_code', room.code);
+    
+    let players = playersData?.map((player)=> {
+        if (Array.isArray(player.profiles)){
+            return player.profiles[0] as Player;
+        }
+
+        return player.profiles as Player;
+    });
+
+    if (!players){
+        redirect(303, '/');
+    }
+
     return {
-        room
+        room,
+        players
     };
 }) satisfies PageServerLoad;

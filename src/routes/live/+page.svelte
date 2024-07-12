@@ -21,6 +21,7 @@
 	import { type ComponentType } from 'svelte';
 
 	import { Sword, Swords, BicepsFlexed, Zap, FlagTriangleRight } from 'lucide-svelte';
+    import { goto } from '$app/navigation';
 
 	const modes: {
 		[key in roomMode]: {
@@ -58,11 +59,26 @@
 
 	export let data;
 
-    let { supabase, session, user, profile, room } = data;
-    $: ({ supabase, session, user, profile, room } = data);
+    let { supabase, session, user, profile, room, players } = data;
+    $: ({ supabase, session, user, profile, room, players } = data);
 
 	let mode: roomMode = 'standard';
 	$: mode = room?.mode ?? 'standard';
+
+	supabase
+        .channel('arena_rooms')
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'arena_rooms', filter: `code=eq.${room.code}` },
+            async (payload) => {
+                if (payload.eventType == 'DELETE') {
+                    await goto('/live', { invalidateAll: true });
+                } else {
+					room = payload.new as PublicRoom;
+                }
+            }
+        )
+        .subscribe();
 </script>
 
 <section class="w-full max-w-[1279px] space-y-4 p-2 sm:p-4 md:pb-8 lg:py-12 xl:pb-12">
@@ -132,7 +148,7 @@
 				<RoomSettings {user} {room} />
 			</Tabs.Content>
 			<Tabs.Content class="lg:h-full" value="game">
-				<GameSettings />
+				<GameSettings selectedMode={room.mode}/>
 			</Tabs.Content>
 			<Tabs.Content class="lg:h-full" value="problemset">
 				<ProblemsetSettings />
@@ -140,7 +156,7 @@
 		</Tabs.Root>
 
 		<div class="xl:col-span-2">
-			<Players id={user?.id} host={room?.info?.host} />
+			<Players {user} {room} {players} />
 		</div>
 	</section>
 </section>

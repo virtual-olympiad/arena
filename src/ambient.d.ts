@@ -6,10 +6,10 @@ declare global {
     }
 
     interface Player extends DisplayPlayer {
-        uid: string;
+        id: string;
         display_name: string;
         username: string;
-        statusText: string;
+        status_text: string;
     }
 
     type roomMode = 'standard' | 'guts' | 'relay' | 'blitz' | 'showdown';
@@ -20,6 +20,7 @@ declare global {
         description: string;
         mode: roomMode;
         host: string;
+        private: boolean;
         players: DisplayPlayer[];
         max_players: number;
     }

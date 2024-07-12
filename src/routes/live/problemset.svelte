@@ -10,10 +10,6 @@
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-
-    export let user, room;
-
-	$: notHost = (user?.id != room?.info?.host);
 </script>
 
 <Card.Root class="h-full">
@@ -22,16 +18,8 @@
         <Card.Description>Tweak the parameters of the auto-generated problemset.</Card.Description>
     </Card.Header>
     <Card.Content class="space-y-2">
-        <div class="space-y-1">
-            <Label for="room-code">Room Code</Label>
-            <Input id="room-code" type="text" placeholder="Enter a code..." />
-        </div>
-        <div class="space-y-1">
-            <Label for="room-password">Room Password</Label>
-            <Input id="room-password" type="text" placeholder="For private rooms..." />
-        </div>
     </Card.Content>
     <Card.Footer>
-        <Button>Join Room</Button>
+        <Button>Update Settings</Button>
     </Card.Footer>
 </Card.Root>
