@@ -18,6 +18,8 @@
 	import GameSettings from './game.svelte';
 	import ProblemsetSettings from './problemset.svelte';
 
+	import { socket } from '$lib/socket';
+
 	import { type ComponentType } from 'svelte';
 
 	import { Sword, Swords, BicepsFlexed, Zap, FlagTriangleRight } from 'lucide-svelte';
@@ -58,7 +60,7 @@
 		}
 	};
 
-	export let data, socket;
+	export let data;
 
     let { supabase, session, user, profile, room, players } = data;
     $: ({ supabase, session, user, profile, room, players } = data);
