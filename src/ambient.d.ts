@@ -20,15 +20,37 @@ declare global {
         description: string;
         mode: roomMode;
         host: string;
-        private: boolean;
         players: DisplayPlayer[];
         max_players: number;
+        settings_game: {
+            mode: roomMode;
+            duration: number;
+        };
+        settings_problemset: {
+            problemCount: number;
+            correctValue: number;
+            incorrectValue: number;
+            blankValue: number;
+            selected: boolean;
+        };
+    }
+
+    interface Room extends PublicRoom {
+        private: boolean;
     }
 
     type PublicRoomOtherFilters = {
         notFull?: boolean;
         mode: roomMode | null;
 	}
+
+    interface SourceSettings {
+        problemCount: number;
+        correctValue: number;
+        incorrectValue: number;
+        blankValue: number;
+        selected: boolean;
+    }
 }
 
 export {};

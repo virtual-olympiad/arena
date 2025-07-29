@@ -22,6 +22,7 @@
 
 	import { Sword, Swords, BicepsFlexed, Zap, FlagTriangleRight } from 'lucide-svelte';
     import { goto } from '$app/navigation';
+    import { toast } from 'svelte-sonner';
 
 	const modes: {
 		[key in roomMode]: {
@@ -57,7 +58,7 @@
 		}
 	};
 
-	export let data;
+	export let data, socket;
 
     let { supabase, session, user, profile, room, players } = data;
     $: ({ supabase, session, user, profile, room, players } = data);
@@ -74,11 +75,17 @@
                 if (payload.eventType == 'DELETE') {
                     await goto('/live', { invalidateAll: true });
                 } else {
-					room = payload.new as PublicRoom;
+					room = payload.new as Room;
                 }
             }
         )
         .subscribe();
+	
+	socket.on('edit-settings:success', async () => {
+        toast.success('Settings updated successfully.');
+    });
+
+	$: notHost = (user?.id != room?.host);
 </script>
 
 <section class="w-full max-w-[1279px] space-y-4 p-2 sm:p-4 md:pb-8 lg:py-12 xl:pb-12">
@@ -109,13 +116,13 @@
 			{room.private ? 'Private':'Public'}
 		</Badge>
 		<div class="!ml-auto flex items-center space-x-2 md:space-x-4">
-			<Button variant="outline" size="icon" class="hidden md:flex">
+			<Button disabled={notHost} variant="destructive" size="icon" class="hidden md:flex">
 				<Trash2 class="h-4 w-4" />
 			</Button>
-			<Button variant="destructive" size="icon" class="h-8 w-8 p-0 md:hidden">
+			<Button disabled={notHost} variant="destructive" size="icon" class="h-8 w-8 p-0 md:hidden">
 				<Trash2 class="h-4 w-4" />
 			</Button>
-			<Button class="hidden md:flex">
+			<Button disabled={notHost} class="hidden md:flex">
 				Start Game
 				<Play class="ml-2 h-4 w-4" />
 			</Button>
@@ -145,13 +152,13 @@
 				<Tabs.Trigger value="problemset">Problemset</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content class="lg:h-full" value="room">
-				<RoomSettings {user} {room} />
+				<RoomSettings {user} {session} {room}/>
 			</Tabs.Content>
 			<Tabs.Content class="lg:h-full" value="game">
-				<GameSettings selectedMode={room.mode}/>
+				<GameSettings {session} {notHost} {room}/>
 			</Tabs.Content>
 			<Tabs.Content class="lg:h-full" value="problemset">
-				<ProblemsetSettings />
+				<ProblemsetSettings {session} {notHost} {room}/>
 			</Tabs.Content>
 		</Tabs.Root>
 

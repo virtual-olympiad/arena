@@ -6,14 +6,46 @@
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import Switch from '$lib/components/ui/switch/switch.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+
+	import { toast } from "svelte-sonner";
 	
 	import { capitalize } from '$lib/utils.js';
     import type { SupabaseClient } from '@supabase/supabase-js';
     import { goto } from '$app/navigation';
+	import {socket} from '$lib/socket';
 
-	export let user, room: PublicRoom;
+	export let user, session, room: Room;
 
 	$: notHost = (user?.id != room?.host);
+
+	const handleUpdateRoom = async () => {
+		if (notHost) {
+			toast.error('You are not the host of this room.');
+			return;
+		}
+
+		let { title, description } = room;
+		
+        if (title.length == 0 || title.length > 20) {
+            toast.warning('Title must be between 1 and 20 characters.');
+            return;
+        }
+
+        if (description.length > 200) {
+            toast.warning('Description must be at most 200 characters.');
+            return;
+        }
+
+		socket.emit('edit-settings-room', {
+			token: session?.access_token,
+			data: {
+				title: title,
+				description: description,
+				max_players: room.max_players,
+				private: room.private
+			}
+		});
+	};
 </script>
 
 <Card.Root class="h-full">
@@ -44,11 +76,11 @@
 			<Label for="visibility">Room Visibility</Label>
 			<div class="flex items-center space-x-3">
 				<p class="text-sm text-muted-foreground">Make Private</p>
-				<Switch bind:checked={room.private} id="visibility" />
+				<Switch disabled={notHost} bind:checked={room.private} id="visibility" />
 			</div>
 		</div>
 	</Card.Content>
 	<Card.Footer>
-		<Button>Update Settings</Button>
+		<Button disabled={notHost} on:click={handleUpdateRoom}>Update Settings</Button>
 	</Card.Footer>
 </Card.Root>

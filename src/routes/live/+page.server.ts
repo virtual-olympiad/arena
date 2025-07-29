@@ -20,7 +20,9 @@ export const load = (async ({ parent, locals: { supabase, safeGetSession } }) =>
                 host,
                 private,
                 players,
-                max_players
+                max_players,
+                settings_game,
+                settings_problemset
             )
             `
         )
@@ -65,6 +67,8 @@ export const load = (async ({ parent, locals: { supabase, safeGetSession } }) =>
     }
 
     return {
+        session,
+        user,
         room,
         players
     };

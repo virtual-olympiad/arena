@@ -4,7 +4,7 @@ import type { LayoutServerLoad } from './$types';
 export const load = (async ({ url, locals: { supabase, safeGetSession } }) => {
     const { session, user } = await safeGetSession();
 
-    let profile;
+    let profile, game = null;
 
     if (session) {
         ({ data: profile } = await supabase
@@ -17,6 +17,7 @@ export const load = (async ({ url, locals: { supabase, safeGetSession } }) => {
     return {
         session,
         user,
-        profile
+        profile,
+        game
     };
 }) satisfies LayoutServerLoad;

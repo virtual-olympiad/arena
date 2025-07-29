@@ -1,16 +1,28 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Alert from "$lib/components/ui/alert";
 
 	import PublicRooms from './public-rooms.svelte';
 	import PublicRoomsFilter from './public-rooms-filter.svelte';
     import CreateRoom from './create-room.svelte';
     import JoinRoom from './join-room.svelte';
     import { socket } from '$lib/socket';
+    import { CircleAlert } from 'lucide-svelte';
+    import Button from '$lib/components/ui/button/button.svelte';
+	import { goto, invalidateAll } from '$app/navigation';
+    import { onMount } from 'svelte';
 
+	onMount(() => {
+		const url = new URL(window.location.href);
+		if (url.searchParams.get('login') === 'success') {
+			invalidateAll();
+		}
+	});
+	
 	export let data;
 	
-    let { rooms, supabase, session } = data;
-    $: ({ rooms, supabase, session } = data);
+    let { rooms, supabase, session, game } = data;
+    $: ({ rooms, supabase, session, game } = data);
 
 	let onlinePlayers = 0;
 
@@ -27,6 +39,9 @@
 		mode: null
 	};
 
+	onMount(() => {
+		socket.emit('player-count');
+	})
 
     socket.on('player-count:update', ({value}) => {
 		onlinePlayers = value;
@@ -34,6 +49,20 @@
 </script>
 
 <section class="w-full max-w-[1536px] p-4">
+	{#if game}
+		<Alert.Root class="flex w-full">
+			<CircleAlert class="h-4 w-4" />
+			<span>
+				<Alert.Title>Live Game</Alert.Title>
+				<Alert.Description>
+					You are currently in a game room.
+				</Alert.Description>
+			</span>
+			<Button class="ml-auto" href="/live">
+				Return to Room
+			</Button>
+		</Alert.Root>
+	{/if}
 	<section
 		class="mx-auto hidden max-w-[980px] flex-col items-center gap-2 py-8 text-center min-[320px]:flex md:py-12 md:pb-8 xl:pb-12"
 	>
@@ -72,7 +101,7 @@
 
 		<div class="lg:col-span-2 xl:col-span-1">
 			<PublicRoomsFilter bind:titleFilter bind:otherFilters />
-			<PublicRooms {rooms} {session} {supabase} {titleFilter} {otherFilters} />
+			<PublicRooms {rooms} {session} {supabase} {titleFilter} {otherFilters} {game} />
 		</div>
 	</section>
 </section>

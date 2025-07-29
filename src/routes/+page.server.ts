@@ -1,7 +1,24 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutLoad, PageServerLoad } from './$types';
 
-export const load = (async ({ locals: { supabase } }) => {
+export const load = (async ({ parent, locals: { supabase } }) => {
+    const { session, user } = await parent();
+
+    let game = null;
+
+    if (session) {
+        const { data } = await supabase
+        .from('arena_users_rooms')
+        .select(
+            `
+            room_code
+            `
+        )
+        .eq('user_id', user.id).limit(1).single();
+    
+        game = data?.room_code;
+    }
+
     let { data: rooms } = await supabase
         .from('arena_rooms')
         .select(`
@@ -20,6 +37,7 @@ export const load = (async ({ locals: { supabase } }) => {
     }
     
     return {
-        rooms
+        rooms,
+        game
     };
 }) satisfies PageServerLoad;

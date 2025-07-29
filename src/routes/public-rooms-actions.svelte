@@ -3,9 +3,15 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
     import { socket } from "$lib/socket";
+    import { goto } from '$app/navigation';
 
-	export let code: string, session;
+	export let code: string, session, game;
 	const handleJoinRoom = () => {
+		if (code == game){
+			goto(`/live`);
+			return;
+		}
+
 		console.log(code);
         socket.emit('join-room', {
             token: session?.access_token,

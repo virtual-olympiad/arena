@@ -72,12 +72,11 @@
                             description: 'Leave the room to create or join another room.'
                         });
                     break;
-                    case 'Invalid room code.':
-                        toast.error('Invalid room code');
+                    case 'Cannot edit settings, user is not a room host.':
+                        toast.error('You are not the host of this room.');
                     break;
-                    case 'Cannot join room, room is full.':
-                        toast.error('Cannot join room, room is full.');
-                    break;
+                    default:
+                        toast.error(message);
                 }
                 break;
             case 'supabaseError':
@@ -224,7 +223,7 @@
 </header>
 
 <main class="flex flex-col items-center" style="min-height: calc(100dvh - 3.5rem)">
-    <slot />
+    <slot {supabase}/>
 </main>
 
 <footer class="py-6 md:px-8 md:py-0">

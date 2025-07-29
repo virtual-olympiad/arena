@@ -12,6 +12,8 @@
 	import { type ComponentType } from 'svelte';
 
 	import { Sword, Swords, BicepsFlexed, Zap, FlagTriangleRight } from 'lucide-svelte';
+    import { toast } from 'svelte-sonner';
+    import { socket } from '$lib/socket';
 
 	const modes: {
 		value: roomMode | null;
@@ -55,7 +57,26 @@
 		}
 	];
 
-	export let selectedMode;
+	let gameSettings = {
+		mode: 'standard',
+		duration: 30
+	};
+
+	export let session, notHost, room;
+
+	$: gameSettings = room.settings_game;
+
+	const handleUpdateRoom = () => {
+		if (notHost) {
+			toast.error('You are not the host of this room.');
+			return;
+		}
+
+		socket.emit('edit-settings-game', {
+			token: session?.access_token,
+			data: gameSettings
+		});
+	};
 </script>
 
 <Card.Root class="h-full">
@@ -74,7 +95,7 @@
                     let:builder
                 >
                     <Select.Value asChild placeholder="Select a game mode">
-                        {capitalize(selectedMode)}
+                        {capitalize(gameSettings.mode)}
                     </Select.Value>
                 </Select.Trigger>
                 <Select.Content>
@@ -96,8 +117,13 @@
                 </Select.Content>
             </Select.Root>
         </div>
+
+		<div class="space-y-1">
+			<Label for="game-duration">Duration (minutes)</Label>
+			<Input disabled={notHost} bind:value={gameSettings.duration} id="game-duration" type="number" min="1" max="300" step="1" placeholder="Enter duration..." />
+		</div>
 	</Card.Content>
 	<Card.Footer>
-		<Button>Update Settings</Button>
+		<Button on:click={handleUpdateRoom} disabled={notHost}>Update Settings</Button>
 	</Card.Footer>
 </Card.Root>
